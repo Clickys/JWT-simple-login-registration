@@ -1,4 +1,4 @@
-const { body, validationResult } = require('express-validator');
+const { body, validationResult, check } = require('express-validator');
 const User = require('../models/user.js');
 const Cookies = require('cookies');
 const jwt = require('jsonwebtoken');
@@ -11,13 +11,27 @@ const validateRegister = [
         .isLength({ min: 6 })
         .withMessage('Password must be at least 6 characters long'),
 ];
+//check type of error
+const checkError = (errors) => {
+    let emailError = '';
+    let passwordError = '';
+    errors.array().forEach((error) => {
+        if (error.path === 'email') {
+            emailError = error.msg;
+        }
+        if (error.path === 'password') {
+            passwordError = error.msg;
+        }
+    });
+    return { emailError, passwordError };
+};
 
-// Register controller
+// Register post controller
 
 const registerController = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).render('pages/register', checkError(errors));
     }
     const { email, password } = req.body;
 
@@ -42,7 +56,7 @@ const registerController = async (req, res) => {
     }
 };
 
-// login controller
+// login post controller
 
 const loginController = async (req, res) => {
     try {
@@ -74,9 +88,13 @@ const loginController = async (req, res) => {
             } else {
                 res.status(400).json({ error: 'Invalid credentials' });
             }
+        } else {
+            res.status(401).render('pages/login', {
+                error: 'Invalid credentials',
+            });
         }
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ error: error });
     }
 };
 module.exports = { validateRegister, registerController, loginController };

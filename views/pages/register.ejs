@@ -29,22 +29,19 @@
                                 required
                             />
                         </div>
-                        <div class="form-group">
-                            <label for="confirmPassword"
-                                >Confirm Password</label
-                            >
-                            <input
-                                type="password"
-                                class="form-control"
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                required
-                            />
-                        </div>
                         <button type="submit" class="btn btn-primary btn-block">
                             Register
                         </button>
                     </form>
+                    <% if (emailError) { %>
+                    <div class="alert alert-danger mt-3" role="alert">
+                        <%= emailError %>
+                    </div>
+                    <% } %> <% if (passwordError) { %>
+                    <div class="alert alert-danger mt-3" role="alert">
+                        <%= passwordError %>
+                    </div>
+                    <% } %>
                 </div>
             </div>
         </main>
