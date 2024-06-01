@@ -13,6 +13,8 @@ const URI = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PWD}@cluster0
 
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/node_modules', express.static('node_modules'));
+
 
 // handle JSON bodies
 app.use(express.json());

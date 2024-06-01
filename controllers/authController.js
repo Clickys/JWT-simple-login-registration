@@ -13,6 +13,7 @@ const validateRegister = [
 ];
 //check type of error
 const checkError = (errors) => {
+    debugger;
     let emailError = '';
     let passwordError = '';
     errors.array().forEach((error) => {
@@ -29,11 +30,12 @@ const checkError = (errors) => {
 // Register post controller
 
 const registerController = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).render('pages/register', checkError(errors));
-    }
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //     return res.status(400).render('pages/register', checkError(errors));
+    // }
     const { email, password } = req.body;
+    console.log(email);
 
     try {
         const user = await User.create({ email, password });
@@ -47,12 +49,24 @@ const registerController = async (req, res) => {
             httpOnly: true,
         });
 
-        res.status(201).json({
-            message: 'User created successfully',
-            user,
+        res.render('sucess-registration', {
+            successMessage: 'Register successful!',
         });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        errorStatus = {
+            emailError: '',
+            passwordError: '',
+        };
+
+        if (error.errors) {
+            if (error.errors.email && error.errors.email.message) {
+                errorStatus.emailError = error.errors.email.message;
+            }
+            if (error.errors.password && error.errors.password.message) {
+                errorStatus.passwordError = error.errors.password.message;
+            }
+        }
+            res.status(400).render('pages/register', errorStatus);
     }
 };
 
