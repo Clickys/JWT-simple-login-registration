@@ -37,4 +37,8 @@ router.get('/register', (req, res) => {
 router.get('/login', (req, res) => {
     res.render('pages/login', { error: '' });
 });
+
+router.get('/success-registration', (req, res) => {
+    res.render('pages/success-registration');
+});
 module.exports = router;
