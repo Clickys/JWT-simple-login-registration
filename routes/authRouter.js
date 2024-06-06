@@ -23,7 +23,7 @@ router.post('/register', validateRegister, registerController);
 router.post('/login', loginController);
 
 router.get('/protected', authenticateJWT, (req, res) => {
-    res.send('Protected route');
+    res.render('pages/protected');
 });
 
 router.get('/', (req, res) => {

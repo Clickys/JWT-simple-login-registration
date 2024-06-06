@@ -51,6 +51,7 @@ const registerController = async (req, res) => {
 
 const loginController = async (req, res) => {
     const { email, password } = req.body;
+
     try {
         const user = await User.findOne({
             email,
@@ -63,6 +64,9 @@ const loginController = async (req, res) => {
             );
 
             if (isPasswordMatch) {
+                let expiryDate = new Date();
+                expiryDate.setTime(expiryDate.getTime() + 2 * 60 * 1000); // 2 minutes in the future
+
                 const token = jwt.sign(
                     { id: user._id },
                     process.env.JWT_SECRET,
@@ -73,8 +77,13 @@ const loginController = async (req, res) => {
                 const cookies = new Cookies(req, res);
                 cookies.set('jwt', token, {
                     httpOnly: true,
+                    expires: expiryDate,
                 });
                 res.status(200).render('pages/success-login');
+            } else {
+                res.status(401).render('pages/login', {
+                    error: 'User not found',
+                });
             }
         } else {
             res.status(401).render('pages/login', {
